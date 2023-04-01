@@ -72,7 +72,12 @@ public class login {
 else{
                     jFrame.setVisible(false);//将登录界面设定为不可见
                     JOptionPane.showMessageDialog(jFrame,"登陆成功","提示",JOptionPane.INFORMATION_MESSAGE);
-//                  new StudentManage().StudentMainInterface();
+                    ArithmeticQuizGUI quiz = new ArithmeticQuizGUI();
+                    quiz.setSize(600, 500);
+                    quiz.setLocationRelativeTo(null);
+                    quiz.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                    quiz.setVisible(true);
 
                 }
             } catch (Exception ex) {
