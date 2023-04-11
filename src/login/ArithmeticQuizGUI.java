@@ -39,7 +39,7 @@ public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
         questionCountField = new JTextField("10", 5);
         nextButton = new JButton("生成题目");
         submitButton = new JButton("提交答案");
-        Button1 =new JButton("下载错题");
+        Button1 =new JButton("发送错题到邮箱");
         resultLabel = new JLabel("");
         // 创建表格
         tableModel = new DefaultTableModel(new String[]{"题目", "你的答案", "正确答案","系统批改"}, 0);
