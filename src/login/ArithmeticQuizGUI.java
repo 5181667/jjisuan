@@ -18,6 +18,11 @@ import java.io.*;
 import java.util.Vector;
 
 public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
+    public static String addColor(String msg, Color color) {
+        String hexColor = String.format("#%06X",  (0xFFFFFF & color.getRGB()));
+        String colorMsg =" <FONT COLOR=hexColor>" + msg +"</FONT>";
+        return colorMsg;
+    }
     private JLabel questionCountLabel;
     private JTextField questionCountField;
     private JButton nextButton;
@@ -188,7 +193,11 @@ public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
                 String str0=" ";
                 while (resultSet.next()) {
                     String title = resultSet.getString("wrongtitle");
-                    str0=str0+title+"<br>";
+                    String wa=resultSet.getString("wrongan");
+                    String ac=resultSet.getString("truean");
+                    addColor(wa,Color.RED);
+                    addColor(ac,Color.green);
+                    str0=str0+title+" "+ac+" "+"您的错误答案为:"+wa+"<br>";
                 }
                 bw.close();
                 fw.close();
@@ -230,6 +239,7 @@ public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
                 // 设置邮件的内容体
                 message.setContent(str0, "text/html;charset=UTF-8");
                 // 发送邮件
+
                 Transport.send(message);
 
 
