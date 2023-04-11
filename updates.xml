@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updateDescriptor baseUrl="">
+  <entry targetMediaFileId="26" updatableVersionMin="" updatableVersionMax="" fileName="四则_windows-x64_1_0.exe" newVersion="1.0" newMediaFileId="26" fileSize="47887360" md5Sum="1d5e6ee8f57dd2855488ce792d213a5e" sha256Sum="e3842f751b6a4abbf18dba19250382a0224e02b1dcd08bc7d383cbca905ba46a" bundledJre="windows-amd64-17.0.6.tar.gz" archive="false" singleBundle="false">
+    <comment language="zh_CN" />
+  </entry>
+  <entry targetMediaFileId="29" updatableVersionMin="" updatableVersionMax="" fileName="四则_macos_1_0.dmg" newVersion="1.0" newMediaFileId="29" fileSize="47648903" md5Sum="0d4bd3431e78a13cbb58d82c4a0b508c" sha256Sum="358457fcf632f15549522304077abdf93142fe7a46c818fa16413acf57c0238e" bundledJre="macos-aarch64-17.0.6.tar.gz" archive="false" singleBundle="false">
+    <comment language="zh_CN" />
+  </entry>
+</updateDescriptor>

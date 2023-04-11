@@ -22,9 +22,22 @@ public class loginpd {
         com.close();
         return f;
     }
-    public int zhuce(String username,String password) throws Exception{
+    public String getemail(String username) throws Exception{
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/competition", "root", "huchi123");
+        Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/hcjian", "root", "huchi123");
+        Statement stat = com.createStatement();
+        int f=0;
+        ResultSet rs=stat.executeQuery("select * from user");
+        while (rs.next()){
+            if(rs.getString("username").equals(username)){
+                return rs.getString("email");
+            }
+        }
+        return "";
+    }
+    public int zhuce(String username,String password,String email) throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection com = DriverManager.getConnection("jdbc:mysql://localhost:3306/hcjian", "root", "huchi123");
         Statement stat = com.createStatement();
         int f=0;
         ResultSet rs=stat.executeQuery("select * from user");
@@ -34,7 +47,7 @@ public class loginpd {
                 return f;
             }
         }
-            stat.executeUpdate("insert into user" + "(username,password)" + "values(" +"'"+ username + "'" +","+"'"+password+"'"+")");
+            stat.executeUpdate("insert into user" + "(username,password,email)" + "values(" +"'"+ username + "'" +","+"'"+password+"'"+","+"'"+email+"'"+")");
             rs.close();
             stat.close();
             com.close();

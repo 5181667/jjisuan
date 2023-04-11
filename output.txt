@@ -1,0 +1,4 @@
+# List of generated media files. The columns are tab-separated:
+# id | media file type | display name | media file path
+26	windows	Windows	/Users/huchi/Desktop/jjisuan/四则_windows-x64_1_0.exe
+29	macos	macOS Folder	/Users/huchi/Desktop/jjisuan/四则_macos_1_0.dmg

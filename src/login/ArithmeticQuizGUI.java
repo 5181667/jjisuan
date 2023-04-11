@@ -1,18 +1,27 @@
 package login;
 
+import login.login.*;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.*;
+import java.util.Properties;
 import java.util.Random;
+import java.io.*;
+import java.util.Vector;
 
-public class ArithmeticQuizGUI extends JFrame implements ActionListener {
+public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
     private JLabel questionCountLabel;
     private JTextField questionCountField;
     private JButton nextButton;
     private JButton submitButton;
+    private JButton Button1;
     private JTable quizTable;
     private DefaultTableModel tableModel;
     private JLabel resultLabel;
@@ -25,20 +34,20 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
 
     public ArithmeticQuizGUI() {
         super("四则运算练习");
-
         // 创建控件
         questionCountLabel = new JLabel("请输入题目数量：");
         questionCountField = new JTextField("10", 5);
-        nextButton = new JButton("下一题");
+        nextButton = new JButton("生成题目");
         submitButton = new JButton("提交答案");
+        Button1 =new JButton("下载错题");
         resultLabel = new JLabel("");
-
         // 创建表格
-        tableModel = new DefaultTableModel(new String[]{"题目", "你的答案", "正确答案"}, 0);
+        tableModel = new DefaultTableModel(new String[]{"题目", "你的答案", "正确答案","系统批改"}, 0);
         quizTable = new JTable(tableModel);
         quizTable.getColumnModel().getColumn(0).setPreferredWidth(200);
         quizTable.getColumnModel().getColumn(1).setPreferredWidth(100);
         quizTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        quizTable.getColumnModel().getColumn(3).setPreferredWidth(100);
         quizTable.setDefaultEditor(Object.class, null); // 禁止编辑表格
         quizTable.setRowHeight(30);
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
@@ -46,6 +55,7 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
         quizTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
         quizTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
         quizTable.getColumnModel().getColumn(2).setCellRenderer(renderer);
+        quizTable.getColumnModel().getColumn(3).setCellRenderer(renderer);
         quizTable.setDefaultEditor(Object.class, new DefaultCellEditor(new JTextField()));
         JScrollPane scrollPane = new JScrollPane(quizTable);
 
@@ -55,6 +65,7 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
         panel.add(questionCountField);
         panel.add(nextButton);
         panel.add(submitButton);
+        panel.add(Button1);
         add(panel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(resultLabel, BorderLayout.SOUTH);
@@ -62,9 +73,35 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
         // 注册事件处理器
         nextButton.addActionListener(this);
         submitButton.addActionListener(this);
+        Button1.addActionListener(this);
     }
 
     // 处理按钮点击事件
+//    public void  actionPerformed1 (ActionEvent e)  {
+//        if(e.getSource() == Button1){
+//            String url="jdbc:mysql://localhost:3306/NewCreate";
+//            String username="root";
+//            String password="password";
+//            try {
+//                Class.forName("com.mysql.cj.jdbc.Driver");
+//                Connection connection = DriverManager.getConnection(url, username, password);
+//                Statement stmt = connection.createStatement();
+//                String sql = "select * from wrongset";
+//                ResultSet resultSet = stmt.executeQuery(sql);
+//                FileWriter fw = new FileWriter("title.txt");
+//                BufferedWriter bw = new BufferedWriter(fw);
+//                while (resultSet.next()) {
+//                    String title = resultSet.getString("title");
+//                    bw.write(title);
+//                    bw.newLine();
+//                }
+//                bw.close();
+//                fw.close();
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
+//    }
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == nextButton) {
             // 点击下一题按钮，生成题目和答案
@@ -85,8 +122,8 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
             // 生成题目和答案
             Random random = new Random();
             for (int i = 0; i < questionCount; i++) {
-                num1[i] = random.nextInt(100);
-                num2[i] = random.nextInt(100);
+                num1[i] = random.nextInt(10000);
+                num2[i] = random.nextInt(10000);
                 operator[i] = randomOperator();
                 answer[i] = calculate(num1[i], num2[i], operator[i]);
                 tableModel.addRow(new Object[]{String.format("%d %c %d =", num1[i], operator[i], num2[i]), "", ""});
@@ -94,31 +131,114 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
         } else if (e.getSource() == submitButton) {
             // 点击提交答案按钮，判断答案并标记表格
             int correctCount = 0;
+            String str="正确",str1="错误";
             for (int i = 0; i < questionCount; i++) {
                 try {
                     int userAnswer = Integer.parseInt((String) tableModel.getValueAt(i, 1));
-                    if (userAnswer == answer[i]) {
+                    if (answer[i] == userAnswer) {
                         // 答案正确，标记为绿色
                         tableModel.setValueAt(String.valueOf(userAnswer), i, 1);
                         tableModel.setValueAt(String.valueOf(answer[i]), i, 2);
-                        quizTable.setSelectionBackground(Color.GREEN);
+                        tableModel.setValueAt(String.valueOf(str), i, 3);
+                        //quizTable.setSelectionBackground(Color.GREEN);
                         correctCount++;
                     } else {
                         // 答案错误，标记为红色
                         tableModel.setValueAt(String.valueOf(userAnswer), i, 1);
                         tableModel.setValueAt(String.valueOf(answer[i]), i, 2);
-                        quizTable.setSelectionBackground(Color.RED);
+                        tableModel.setValueAt(String.valueOf(str1), i, 3);
+                        //quizTable.setSelectionBackground(Color.RED);
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection com = null;
+                        com = DriverManager.getConnection("jdbc:mysql://localhost:3306/NewCreate", "root", "huchi123");
+                        Statement stat = com.createStatement();
+                        stat.executeUpdate("insert into wrongset" + "(wrongtitle)" + "values(" +"'"+ num1[i]+" "+operator[i]+" "+num2[i]+" "+" = "+"'"+")");
+                        stat.close();
+                        com.close();
                     }
-                } catch (NumberFormatException ex) {
-                    // 如果答案不是数字，则弹出提示框
-                    JOptionPane.showMessageDialog(this, "请输入数字！");
-                    return;
                 }
+            catch (NumberFormatException ex) {
+                    // 如果答案不是数字，则弹出提示框
+                    JOptionPane.showMessageDialog(this, "确定交卷吗？");
+                    break;
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+
             }
             // 显示总分
             int totalScore = 100 / questionCount * correctCount;
             resultLabel.setText(String.format("总分：%d分", totalScore));
         }
+        else if(e.getSource()==Button1){
+            String url="jdbc:mysql://localhost:3306/NewCreate";
+            String username="root";
+            String password="huchi123";
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection connection = DriverManager.getConnection(url, username, password);
+                Statement stmt = connection.createStatement();
+                String sql = "select * from wrongset";
+                ResultSet resultSet = stmt.executeQuery(sql);
+                FileWriter fw = new FileWriter("title.txt");
+                BufferedWriter bw = new BufferedWriter(fw);
+                String str0=" ";
+                while (resultSet.next()) {
+                    String title = resultSet.getString("wrongtitle");
+                    str0=str0+title+"<br>";
+                }
+                bw.close();
+                fw.close();
+                final Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.host", "smtp.qq.com");
+
+                // 发件人的账号
+                props.put("mail.user", "2424742061@qq.com");
+                //发件人的密码
+                props.put("mail.password", "asmujlzffgpgdiea");
+                String email = login.email;
+                 // 构建授权信息，用于进行SMTP进行身份验证
+                Authenticator authenticator = new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        // 用户名、密码
+                        String userName = props.getProperty("mail.user");
+                        String password = props.getProperty("mail.password");
+                        return new PasswordAuthentication(userName, password);
+                    }
+                };
+                // 使用环境属性和授权信息，创建邮件会话
+                Session mailSession = Session.getInstance(props, authenticator);
+                // 创建邮件消息
+                MimeMessage message = new MimeMessage(mailSession);
+                // 设置发件人
+                String username1 = props.getProperty("mail.user");
+                InternetAddress form = new InternetAddress(username1);
+                message.setFrom(form);
+
+                // 设置收件人
+                InternetAddress toAddress = new InternetAddress(email);
+                message.setRecipient(Message.RecipientType.TO, toAddress);
+
+                // 设置邮件标题
+                message.setSubject("错题本");
+
+                // 设置邮件的内容体
+                message.setContent(str0, "text/html;charset=UTF-8");
+                // 发送邮件
+                Transport.send(message);
+
+
+
+
+            }catch (Exception e1){
+                e1.printStackTrace();
+            }
+        }
+
     }
 
     // 随机生成运算符
@@ -156,7 +276,12 @@ public class ArithmeticQuizGUI extends JFrame implements ActionListener {
         quiz.setSize(600, 500);
         quiz.setLocationRelativeTo(null);
         quiz.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         quiz.setVisible(true);
+//        try{
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 }
+

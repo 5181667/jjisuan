@@ -2,6 +2,7 @@ package login;
 import javax.swing.*;
 import java.awt.*;
 public class login {
+    public static String email;
     public static void main(String[] args) {
         JFrame jFrame=new JFrame("登陆界面");
         jFrame.setSize(900,556);
@@ -71,7 +72,8 @@ public class login {
                 }
 else{
                     jFrame.setVisible(false);//将登录界面设定为不可见
-                    JOptionPane.showMessageDialog(jFrame,"登陆成功","提示",JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(jFrame,"登陆成功,欢迎您："+user.getText(),"提示",JOptionPane.INFORMATION_MESSAGE);
+                    email = lg.getemail(user.getText());
                     ArithmeticQuizGUI quiz = new ArithmeticQuizGUI();
                     quiz.setSize(600, 500);
                     quiz.setLocationRelativeTo(null);
