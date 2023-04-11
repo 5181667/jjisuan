@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
 import java.io.*;
@@ -152,7 +153,7 @@ public class ArithmeticQuizGUI  extends JFrame implements ActionListener {
                         Connection com = null;
                         com = DriverManager.getConnection("jdbc:mysql://localhost:3306/NewCreate", "root", "huchi123");
                         Statement stat = com.createStatement();
-                        stat.executeUpdate("insert into wrongset" + "(wrongtitle)" + "values(" +"'"+ num1[i]+" "+operator[i]+" "+num2[i]+" "+" = "+"'"+")");
+                        stat.executeUpdate("insert into wrongset" + "(wrongtitle,wrongan,truean)" + "values(" +"'"+ num1[i]+" "+operator[i]+" "+num2[i]+" "+" = "+"'"+","+"'"+ userAnswer +"'"+","+"'"+ answer[i] +"'"+")");
                         stat.close();
                         com.close();
                     }
